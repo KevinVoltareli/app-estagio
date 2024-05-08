@@ -1,0 +1,41 @@
+
+* {
+	font-family: sans-serif;
+
+}
+
+body {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	background: #3C1B43;
+}
+
+.card{
+	position: relative;
+	width: 220px;
+	height: 320px;
+	background: #fff;
+	border-radius: 20px;
+	margin-left: 10px;
+	margin-bottom: 10px;
+	padding-left: 3px;
+}
+
+
+.card .imgBx{
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	padding-top: 20px;
+	align-items: center;
+	z-index: 1;
+}
+
+.card .imgBx  img{
+	max-width: 90%;
+
+}
+

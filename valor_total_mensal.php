@@ -1,4 +1,13 @@
-   
+<?php 
+  if (!isset($_SESSION)):
+    session_start();
+endif;
+  if(!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] != 'SIM'){
+    header('Location: index.php?login=erro2');
+
+        //"CN=sistema_relatorios,OU=TI,OU=SantoGrau,DC=santograu,DC=local"
+         //var_dump($_SESSION['membros']);  
+ ?>   
 
 <!DOCTYPE html>
 <html>

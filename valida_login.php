@@ -1,7 +1,9 @@
 <?php
+ 
+     if(!isset($_SESSION)):
+                  session_start();
+              endif;
 
-session_start();
-$_SESSION['x'] = 'Oi, eu sou um valor de sessão!';
 /*print_r($_SESSION);
 echo '<hr/>';
 print_r($_SESSION['y']);*/
@@ -11,49 +13,48 @@ print_r($_SESSION['y']);*/
 $usuario_autenticado = false;
 
 //USUARIOS DO SISTEMA
-$usuarios_app = array(
-    array('email' => 'adm@teste.com.br', 'senha' => '123456'),
-    array('email' => 'user@teste.com.br', 'senha' => 'abcd')
-);
-/*
 
-echo '<pre>';
+//$usuarios_app = array(
+ //   array($_SESSION['login'], $_SESSION['senha']));
+
+/*echo '<pre>';
 print_r($usuarios_app);
-echo '</pre>';
+echo '</pre>';*/
 
-*/
+                echo '<pre>';
+                print_r($_SESSION['membros']);
+                echo '</pre>';
+                echo '<pre>';
+                print_r($_SESSION['login']);
+                echo '</pre>';
+                echo '<pre>';
+                print_r($_SESSION['senha']);
+                echo '</pre>';
 
-foreach($usuarios_app as $user){
-    /*
-    echo 'Usuario app: ' . $user['email'] . '/' . $user['senha'];
+
+
+
+    
+    echo 'Usuario app: ' . $_SESSION['login'] . '/' . $_SESSION['senha'];
     echo '<br />';
-    echo 'Usuario form: ' . $_POST['email'] . '/' . $_POST['senha'];
+    echo 'Usuario form: ' . $_POST['username'] . '/' . $_POST['password'];
     echo '<hr />';
-    */
-    if($user['email'] == $_POST['email'] && $user['senha'] == $_POST['senha']){
+    
+    if($_SESSION['login'] == $_POST['username'] && $_SESSION['senha'] == $_POST['password']){
         $usuario_autenticado = true;
     }
-}
 
     if($usuario_autenticado){
         echo 'Usuário autenticado.';
-        header('Location: home2.php');
+        //header('Location: home2.php');
 
         $_SESSION['autenticado'] = 'SIM';
     }else{  
+        echo 'NÃO FOI autenticado';
         $_SESSION['autenticado'] = 'NAO';
-        header('Location: index.php?login=erro2');
+        //header('Location: index.php?login=erro2');
       }
 
 
-/*
-print_r($_GET)
-
-echo '<br />'
-echo $_GET['email']
-echo '<br />'
-echo $_GET['senha']
-print_r($_POST);
-*/
 
 ?>

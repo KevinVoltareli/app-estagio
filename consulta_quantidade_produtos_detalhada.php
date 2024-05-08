@@ -8,7 +8,8 @@ endif;
 
         //"CN=sistema_relatorios,OU=TI,OU=SantoGrau,DC=santograu,DC=local"
          //var_dump($_SESSION['membros']);  
-$data = date('Y-m-t');
+
+  $data = date('Y-m-t');
    
    
    $data = explode('-', $data);  
@@ -19,6 +20,7 @@ $data = date('Y-m-t');
     
 $vendaInicio = $ano."-".$mes."-"."01";
 $vendaFim = $ano."-".$mes."-".$dia;
+
 
  ?>  
 
@@ -39,7 +41,6 @@ $vendaFim = $ano."-".$mes."-".$dia;
         <link rel="stylesheet" type="text/css" href="css/estiloRelatorios.css">
 
        <style type="text/css">
-
        body {
         color:#6011a1;
        }
@@ -53,7 +54,8 @@ $vendaFim = $ano."-".$mes."-".$dia;
      </style>
     </head>
     <body>
-    <!-- TOGGLE MENU -->
+
+        <!-- TOGGLE MENU -->
         <input style="-webkit-appearance: none;
                        visibility: hidden;
                        display: none;" type="checkbox" id="check" name="">
@@ -70,6 +72,7 @@ $vendaFim = $ano."-".$mes."-".$dia;
                 <li><a href="consulta_quantidade_produtos_detalhada.php"><i class="fa-solid fa-circle-info"></i>Venda detalhado</a></li>
                 <li><a href="curva_abc.php"><i class="fa-solid fa-shapes"></i>Estoque</a></li>
                 <li><a href="curva_abc_detalhado.php"><i class="fa-solid fa-shapes"></i>Estoque detalhado</a></li>
+                
                 <li><a href="curva_abc_outlet.php"><i class="fa-solid fa-shapes"></i>Estoque outlet</a></li>
                 <li><a href="curva_abc_acessorio.php"><i class="fa-solid fa-shapes"></i>Acessórios</a></li>
                 <li><a href="venda_por_vendedor.php"><i class="fa-sharp fa-solid fa-person"></i>Venda vendedor</a></li>
@@ -82,6 +85,7 @@ $vendaFim = $ano."-".$mes."-".$dia;
             </ol>        
     </div> 
         <!-- FIM TOGGLE MENU -->
+  
 
     <div class="container">
             <div class="row justify-content-center">
@@ -97,13 +101,13 @@ $vendaFim = $ano."-".$mes."-".$dia;
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Data inicial</label>
-                                            <input class="form-control" name="fdate" type="date" maxlength="10" size="10" required value="<?php if(isset($_POST['fdate'])){echo $_POST['fdate'];}else{ echo $vendaInicio; }?>" />
+                                            <input class="form-control" name="fdate" type="date" maxlength="10" size="10" required value="<?php if(isset($_POST['fdate'])){echo $_POST['fdate'];} else{ echo $vendaInicio; }?>" />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">  
                                             <label>Data final</label>
-                                            <input class="form-control" name="tdate" type="date" maxlength="10" size="10" required value="<?php if(isset($_POST['tdate'])){echo $_POST['tdate'];}else{ echo $vendaFim; }?>" />
+                                            <input class="form-control" name="tdate" type="date" maxlength="10" size="10" required value="<?php if(isset($_POST['tdate'])){echo $_POST['tdate'];} else{ echo $vendaFim; }?>" />
                                         </div>
                                     </div>
 
@@ -153,26 +157,20 @@ $vendaFim = $ano."-".$mes."-".$dia;
                         </div>
                     </div>
 
-                     <div style="font-size: 15px " class="container">                        
-                    <div class="row">
-                    <div class="col-6">
                     <div class="card mt-4">
                     <div class="card-body">
                         <table class="table table-borderd">
                             <thead>
                                 <tr>
-                                    <th>Produtos Vendidos</th>
-                                    <th>Quantidade</th>
+                                    <th>Nome</th>
+                                    <th>Cor</th>
+                                    <th>Loja</th> 
+                                    <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
-                        </div>
-                    </div>
+
        
-                                <!-- QUERY DE BUSCA PARA VENDAS -->                
-
-
-
         <?php
         $post = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         @$buscar = strtoupper("%".($_POST['buscar'])."%");
@@ -188,7 +186,8 @@ $vendaFim = $ano."-".$mes."-".$dia;
             }
             $where = "WHERE a.VENDATAHORAFATURAMENTO >=  '" . $post['fdate'] . "'";
             if(!empty($post['tdate'])):
-            $where .=  "AND a.VENDATAHORAFATURAMENTO <=  '". $post['tdate'] ." 23:59'";
+            $where .=  "and a.VENDATAHORAFATURAMENTO <=  '". $post['tdate'] ." 23:59'";
+            //$where .= " AND l.PESID = '" . $post['filial'] . "'";            
             endif;
 
             if(!empty($post['receituario'])):
@@ -203,22 +202,16 @@ $vendaFim = $ano."-".$mes."-".$dia;
                 echo '<h5 style="color: red;">Para buscar todos produtos, mantenha as caixas selecionadas vazias.</h5>';
             endif;
 
-
             if(!empty($post['buscar'])):
             @$where .= "AND h.NOME_APELIDO LIKE :buscar ";            
             endif;
-
-            
-
-            // ******** USAR MESMA LOGICA USADA ACIMA, POREM ATRIBUIR NAMES DIFERENTES PARA OS CHECKBOX -- CRIAR VARIAVEL ATRIBUINDO RESULTADO DESEJADO PARA QUANDO AMBOS ESTÃO SELECIONADOS
-
+              
             if(!empty($post['filial'])):
             $where .= " AND i.FILID_FILIAL = '" . $post['filial'] . "'";
-             endif;
+            endif;
             
-              
             
-            $read = $conn->prepare("SELECT  h.NOME_APELIDO AS NOME, sum(l.PICQTDE) AS TOTAL 
+            $read = $conn->prepare("SELECT  h.NOME_APELIDO AS NOME, h.COR AS COR, sum(l.PICQTDE) AS TOTAL, n.PESNOME AS PESNOME 
                             FROM TB_VEN_VENDA a
                             INNER JOIN TB_VPE_VENDAPEDIDOS b ON b.VENID_VENDA = a.VENID 
                             INNER JOIN TB_IPD_ITEMPEDIDO c ON c.PEDID_PEDIDO = b.PEDID_PEDIDO 
@@ -229,6 +222,8 @@ $vendaFim = $ano."-".$mes."-".$dia;
                             INNER JOIN TB_PED_PEDIDO i ON i.PEDID = c.PEDID_PEDIDO
                             INNER JOIN TB_TVN_TIPOVENDA j ON j.TVNID = i.TVNID
                             INNER JOIN TB_PIC_PEDIDOITEMCLIENTE l ON l.IPDID  = c.IPDID
+                            INNER JOIN TB_FIL_FILIAL m ON m.FILID = i.FILID_FILIAL
+                            INNER JOIN TB_PES_PESSOA n ON n.PESID = m.PESID
                             {$where}
                             AND i.PEDDATACANCELAMENTO IS NULL
                             AND NOT e.NCMID = '56' 
@@ -238,123 +233,41 @@ $vendaFim = $ano."-".$mes."-".$dia;
                             AND NOT e.NCMID = '71'
                             AND NOT e.NCMID = '73'  
                             AND NOT e.NCMID = '75'
-                            GROUP BY  h.NOME_APELIDO, l.PICQTDE
-                            ORDER BY total DESC ");
+                            GROUP BY  h.NOME_APELIDO, l.PICQTDE, h.COR, n.PESNOME
+                            ORDER BY total DESC");
 
             $read->bindParam(':buscar', $buscar, PDO::PARAM_STR);
             $read->setFetchMode(PDO::FETCH_ASSOC);
             $read->execute();
             $array = $read->fetchAll();
             if (count($array) == 0):
-                echo "Nenhum registro localizado";
+                echo "Nenhum registro localizado <br/>";
             endif;
             $qtd = 0;
-            
+
             ?>
             
                 <?php 
                 foreach ($array as $dados): 
                 $qtd += $dados["TOTAL"];
-                //$produtoVenda = $dados["NOME"];
-                //$totalVenda = $dados["TOTAL"];
                     ?>
                     <tr>
                         <td><?= $dados["NOME"]; ?></td>
+                        <td><?= $dados["COR"]; ?></td>
+                        <td><?= $dados["PESNOME"]; ?></td>
                         <td><?= number_format($dados["TOTAL"], 0, ",", "."); ?></td>
 
                     </tr>
                 <?php
                 endforeach; 
+                 echo "<h5>Total geral: {$qtd}</h5>";
                 ?>
-                <?php
-            echo "<h5>Total geral: {$qtd}</h5>";
+            </table>
+            <?php
+          
         endif;
         ?>
-         </table>
-            </div>
-            </div>
-            </div>
 
-        <!-- LOGICA PARA DESCONTAR ITENS DEVOLVIDOS -->
 
-        <div class="card mt-4">
-                    <div class="card-body">
-                        <table class="table table-borderd">
-                            <thead>
-                                <tr>
-                                    <th>Produtos DEVOLVIDOS</th>      
-                                    <th>Quantidade</th>
-        <?php
-        $post = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-        @$buscar = strtoupper("%".($_POST['buscar'])."%");
-
-        if (is_array($post)):
-            try {
-                $conn = new PDO("firebird:dbname=C:\SavWinRevo\Servidor\DataBase\BDSAVWINREVO.FDB", "SYSDBA", "masterkey");
-            } catch (PDOException $e) {
-                echo '<pre>';
-                print_r($e);
-                echo '</pre>';
-                die(); //deu ruim
-            }
-            $where1 = "WHERE a.DEVDATATROCA >=  '" . $post['fdate'] . "'";
-            if(!empty($post['tdate'])):
-            $where1 .=  "AND a.DEVDATATROCA <=  '". $post['tdate'] . "'";
-            endif;
-
-            
-            if(!empty($post['buscar'])):
-            @$where1 .= "AND c.NOME_APELIDO LIKE :buscar ";            
-            endif;
-
-            
-
-            // ******** USAR MESMA LOGICA USADA ACIMA, POREM ATRIBUIR NAMES DIFERENTES PARA OS CHECKBOX -- CRIAR VARIAVEL ATRIBUINDO RESULTADO DESEJADO PARA QUANDO AMBOS ESTÃO SELECIONADOS
-
-            //$where .= " AND l.PESID = '" . $post['filial'] . "'";
-            
-              
-            
-            $read1 = $conn->prepare("SELECT c.NOME_APELIDO as NOMEDEV, sum(a.DEVQUANTIDADE) AS TOTALDEV 
-                                    FROM TB_DEV_DEVOLUCAO a
-                                    INNER JOIN TB_MAT_MATERIAL b ON b.MATID = a.MATID 
-                                    INNER JOIN TB_DRIP_APELIDO c ON c.MATFANTASIA = b.MATFANTASIA 
-                                    {$where1}
-                                    GROUP BY a.DEVQUANTIDADE, c.NOME_APELIDO
-                                    ORDER BY TOTALDEV desc
-                                    ");
-
-            $read1->bindParam(':buscar', $buscar, PDO::PARAM_STR);
-            $read1->setFetchMode(PDO::FETCH_ASSOC);
-            $read1->execute();
-            $array1 = $read1->fetchAll();
-            $qtdDev = 0;
-            
-            ?>
-            
-                <?php 
-                foreach ($array1 as $dados1):                     
-                $qtdDev += $dados1["TOTALDEV"];
-        
-                    ?>
-                    <tr>
-                        <td><?= $dados1["NOMEDEV"];; ?></td>
-                        <td><?= number_format($dados1["TOTALDEV"], 0, ",", "."); ?></td>
-
-                    </tr>
-                <?php
-                endforeach; 
-                 echo "<h5>Total geral DEVOLVIDOS: {$qtdDev}</h5>";
-                ?>
-                <?php
-        endif;       
-        ?>
-
-         
- </table>
-            </div>
-            </div>
-            </div>
-         
     </body>
 </html>
